@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # Основное приложение
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # Монтируем исходный код для hot reload
+      - ./src:/app/src:ro
+      - ./prisma:/app/prisma:ro
+      - ./package.json:/app/package.json:ro
+      - ./tsconfig.json:/app/tsconfig.json:ro
+      - ./nest-cli.json:/app/nest-cli.json:ro
+      # Исключаем node_modules из монтирования
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/rag_tg_bot?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHANNEL_ID=${TELEGRAM_CHANNEL_ID}
+      - YANDEX_CLOUD_API_KEY=${YANDEX_CLOUD_API_KEY}
+      - YANDEX_CLOUD_FOLDER_ID=${YANDEX_CLOUD_FOLDER_ID}
+      - YANDEX_S3_ACCESS_KEY_ID=${YANDEX_S3_ACCESS_KEY_ID}
+      - YANDEX_S3_SECRET_ACCESS_KEY=${YANDEX_S3_SECRET_ACCESS_KEY}
+      - YANDEX_S3_BUCKET_NAME=${YANDEX_S3_BUCKET_NAME}
+      - YANDEX_S3_REGION=${YANDEX_S3_REGION}
+      - YANDEX_S3_ENDPOINT=${YANDEX_S3_ENDPOINT}
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - rag-bot-network
+
+  # PostgreSQL с pgvector
+  postgres:
+    image: pgvector/pgvector:pg15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=rag_tg_bot
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - rag-bot-network
+
+  # Redis для очередей
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - rag-bot-network
+
+  # Prisma Studio для управления БД (опционально)
+  prisma-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./prisma:/app/prisma:ro
+      - ./package.json:/app/package.json:ro
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/rag_tg_bot?schema=public
+    command: ["npx", "prisma", "studio", "--hostname", "0.0.0.0"]
+    depends_on:
+      - postgres
+    networks:
+      - rag-bot-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  rag-bot-network:
+    driver: bridge

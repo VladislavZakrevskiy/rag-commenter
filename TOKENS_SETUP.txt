@@ -1,0 +1,328 @@
+НАСТРОЙКА ТОКЕНОВ И КЛЮЧЕЙ ДЛЯ RAG TELEGRAM BOT
+
+=================================================================
+
+1. TELEGRAM BOT TOKEN
+=================================================================
+
+Что нужно: Токен для Telegram бота
+Переменная: TELEGRAM_BOT_TOKEN
+
+Пошаговая инструкция:
+1. Откройте Telegram и найдите @BotFather
+   Ссылка: https://t.me/BotFather
+
+2. Отправьте команду /newbot
+
+3. Введите имя для вашего бота (например: "RAG Content Bot")
+
+4. Введите username для бота (должен заканчиваться на "bot")
+   Например: rag_content_bot
+
+5. BotFather выдаст вам токен в формате:
+   1234567890:ABCdefGHIjklMNOpqrsTUVwxyz
+
+6. Скопируйте этот токен в .env файл:
+   TELEGRAM_BOT_TOKEN="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz"
+
+Дополнительные настройки бота:
+- /setdescription - установить описание бота
+- /setabouttext - установить текст "О боте"
+- /setuserpic - установить аватар бота
+
+=================================================================
+
+2. TELEGRAM CHANNEL ID
+=================================================================
+
+Что нужно: ID канала, который будет мониторить бот
+Переменная: TELEGRAM_CHANNEL_ID
+
+Способ 1 - Через веб-интерфейс:
+1. Откройте канал в браузере: https://web.telegram.org
+2. ID канала будет в URL после "c/" (например: -1001234567890)
+
+Способ 2 - Через бота:
+1. Добавьте своего бота как администратора в канал
+2. Отправьте любое сообщение в канал
+3. Перейдите по ссылке (замените YOUR_BOT_TOKEN):
+   https://api.telegram.org/botYOUR_BOT_TOKEN/getUpdates
+4. Найдите "chat":{"id":-1001234567890} в ответе
+
+Способ 3 - Через @userinfobot:
+1. Добавьте @userinfobot в канал как администратора
+2. Бот покажет ID канала
+
+Пример в .env:
+TELEGRAM_CHANNEL_ID="-1001234567890"
+
+=================================================================
+
+3. YANDEX CLOUD API KEY
+=================================================================
+
+Что нужно: API ключ для доступа к Yandex Cloud AI
+Переменная: YANDEX_CLOUD_API_KEY
+
+Пошаговая инструкция:
+1. Зарегистрируйтесь в Yandex Cloud:
+   https://cloud.yandex.ru/
+
+2. Перейдите в консоль управления:
+   https://console.cloud.yandex.ru/
+
+3. Создайте новый проект или выберите существующий
+
+4. Перейдите в раздел "Сервисные аккаунты":
+   https://console.cloud.yandex.ru/iam/service-accounts
+
+5. Нажмите "Создать сервисный аккаунт"
+   - Имя: rag-bot-service-account
+   - Роли: ai.languageModels.user, ai.assistants.editor
+
+6. Создайте API ключ:
+   - Откройте созданный сервисный аккаунт
+   - Перейдите на вкладку "API-ключи"
+   - Нажмите "Создать API-ключ"
+   - Скопируйте ключ (он показывается только один раз!)
+
+Пример в .env:
+YANDEX_CLOUD_API_KEY="AQVNxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+=================================================================
+
+4. YANDEX CLOUD FOLDER ID
+=================================================================
+
+Что нужно: ID папки в Yandex Cloud
+Переменная: YANDEX_CLOUD_FOLDER_ID
+
+Как получить:
+1. В консоли Yandex Cloud выберите нужную папку
+2. ID папки отображается в URL или в информации о папке
+3. Формат: b1gxxxxxxxxxxxxxxxxxx
+
+Или через CLI:
+yc resource-manager folder list
+
+Пример в .env:
+YANDEX_CLOUD_FOLDER_ID="b1gxxxxxxxxxxxxxxxxxx"
+
+=================================================================
+
+5. YANDEX OBJECT STORAGE (S3) КЛЮЧИ
+=================================================================
+
+Что нужно: Ключи доступа к Object Storage
+Переменные: 
+- YANDEX_S3_ACCESS_KEY_ID
+- YANDEX_S3_SECRET_ACCESS_KEY
+- YANDEX_S3_BUCKET_NAME
+
+Пошаговая инструкция:
+
+5.1. Создание сервисного аккаунта для S3:
+1. Перейдите в "Сервисные аккаунты":
+   https://console.cloud.yandex.ru/iam/service-accounts
+
+2. Создайте новый аккаунт или используйте существующий
+   - Роли: storage.editor, storage.viewer
+
+5.2. Создание статических ключей доступа:
+1. Откройте сервисный аккаунт
+2. Перейдите на вкладку "Статические ключи доступа"
+3. Нажмите "Создать ключ доступа"
+4. Сохраните:
+   - Идентификатор ключа (Access Key ID)
+   - Секретный ключ (Secret Access Key)
+
+5.3. Создание бакета:
+1. Перейдите в Object Storage:
+   https://console.cloud.yandex.ru/storage/
+
+2. Нажмите "Создать бакет"
+   - Имя: rag-bot-images (уникальное имя)
+   - Регион: ru-central1
+   - Класс хранилища: Стандартное
+   - Доступ: Ограниченный
+
+3. В настройках бакета включите публичный доступ для чтения (если нужно)
+
+Пример в .env:
+YANDEX_S3_ACCESS_KEY_ID="YCAJxxxxxxxxxxxxxxxxxx"
+YANDEX_S3_SECRET_ACCESS_KEY="YCOxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+YANDEX_S3_BUCKET_NAME="rag-bot-images"
+YANDEX_S3_REGION="ru-central1"
+YANDEX_S3_ENDPOINT="https://storage.yandexcloud.net"
+
+=================================================================
+
+6. БАЗА ДАННЫХ POSTGRESQL
+=================================================================
+
+Что нужно: Строка подключения к PostgreSQL с pgvector
+Переменная: DATABASE_URL
+
+Вариант 1 - Локальная установка:
+1. Установите PostgreSQL:
+   - Ubuntu/Debian: sudo apt install postgresql postgresql-contrib
+   - macOS: brew install postgresql
+   - Windows: скачайте с https://www.postgresql.org/download/
+
+2. Установите расширение pgvector:
+   - Ubuntu/Debian: sudo apt install postgresql-15-pgvector
+   - macOS: brew install pgvector
+   - Или соберите из исходников: https://github.com/pgvector/pgvector
+
+3. Создайте базу данных:
+   sudo -u postgres createdb rag_tg_bot
+   sudo -u postgres psql -d rag_tg_bot -c "CREATE EXTENSION vector;"
+
+4. Создайте пользователя:
+   sudo -u postgres psql -c "CREATE USER ragbot WITH PASSWORD 'your_password';"
+   sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE rag_tg_bot TO ragbot;"
+
+Пример в .env:
+DATABASE_URL="postgresql://ragbot:your_password@localhost:5432/rag_tg_bot?schema=public"
+
+Вариант 2 - Yandex Managed Service for PostgreSQL:
+1. Перейдите в Managed Service for PostgreSQL:
+   https://console.cloud.yandex.ru/managed-postgresql
+
+2. Создайте кластер PostgreSQL
+   - Версия: 15 или выше (для поддержки pgvector)
+   - Конфигурация: s2.micro для тестирования
+   - Включите публичный доступ
+
+3. После создания получите строку подключения из консоли
+
+Вариант 3 - Neon (рекомендуется для разработки):
+1. Зарегистрируйтесь на https://neon.tech/
+2. Создайте проект
+3. В настройках проекта включите расширение pgvector
+4. Скопируйте строку подключения
+
+=================================================================
+
+7. REDIS
+=================================================================
+
+Что нужно: Подключение к Redis для очередей
+Переменные:
+- REDIS_HOST
+- REDIS_PORT  
+- REDIS_PASSWORD
+
+Вариант 1 - Локальная установка:
+1. Установите Redis:
+   - Ubuntu/Debian: sudo apt install redis-server
+   - macOS: brew install redis
+   - Windows: https://redis.io/download
+
+2. Запустите Redis:
+   - Linux: sudo systemctl start redis-server
+   - macOS: brew services start redis
+
+Пример в .env:
+REDIS_HOST="localhost"
+REDIS_PORT=6379
+REDIS_PASSWORD=""
+
+Вариант 2 - Yandex Managed Service for Redis:
+1. Перейдите в Managed Service for Redis:
+   https://console.cloud.yandex.ru/managed-redis
+
+2. Создайте кластер Redis
+3. Получите данные подключения из консоли
+
+Вариант 3 - Redis Cloud:
+1. Зарегистрируйтесь на https://redis.com/
+2. Создайте бесплатную базу данных
+3. Получите данные подключения
+
+=================================================================
+
+ПОЛНЫЙ ПРИМЕР .env ФАЙЛА
+=================================================================
+
+# Database
+DATABASE_URL="postgresql://ragbot:password@localhost:5432/rag_tg_bot?schema=public"
+
+# Telegram Bot
+TELEGRAM_BOT_TOKEN="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz"
+TELEGRAM_CHANNEL_ID="-1001234567890"
+
+# Yandex Cloud
+YANDEX_CLOUD_API_KEY="AQVNxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+YANDEX_CLOUD_FOLDER_ID="b1gxxxxxxxxxxxxxxxxxx"
+
+# Yandex Object Storage (S3)
+YANDEX_S3_ACCESS_KEY_ID="YCAJxxxxxxxxxxxxxxxxxx"
+YANDEX_S3_SECRET_ACCESS_KEY="YCOxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+YANDEX_S3_BUCKET_NAME="rag-bot-images"
+YANDEX_S3_REGION="ru-central1"
+YANDEX_S3_ENDPOINT="https://storage.yandexcloud.net"
+
+# Redis
+REDIS_HOST="localhost"
+REDIS_PORT=6379
+REDIS_PASSWORD=""
+
+# Application
+NODE_ENV="development"
+PORT=3000
+
+=================================================================
+
+ПРОВЕРКА НАСТРОЕК
+=================================================================
+
+После настройки всех токенов запустите проверку:
+
+1. Проверьте подключение к базе данных:
+   make shell
+   npx prisma migrate dev
+
+2. Проверьте Telegram бота:
+   - Отправьте /start боту в личные сообщения
+   - Добавьте бота как администратора в канал
+
+3. Проверьте Yandex Cloud:
+   - Убедитесь что сервисный аккаунт имеет нужные роли
+   - Проверьте квоты на использование AI сервисов
+
+4. Проверьте S3:
+   - Попробуйте загрузить тестовый файл через консоль
+
+5. Проверьте Redis:
+   redis-cli ping
+
+=================================================================
+
+БЕЗОПАСНОСТЬ
+=================================================================
+
+ВАЖНО! Никогда не коммитьте .env файл в Git!
+
+1. Убедитесь что .env добавлен в .gitignore
+2. Используйте разные ключи для разработки и продакшена
+3. Регулярно ротируйте API ключи
+4. Ограничьте права сервисных аккаунтов минимально необходимыми
+5. Включите двухфакторную аутентификацию в Yandex Cloud
+
+=================================================================
+
+ПОЛЕЗНЫЕ ССЫЛКИ
+=================================================================
+
+Telegram Bot API: https://core.telegram.org/bots/api
+Yandex Cloud Console: https://console.cloud.yandex.ru/
+Yandex Cloud AI: https://cloud.yandex.ru/services/yandexgpt
+Object Storage: https://cloud.yandex.ru/services/storage
+PostgreSQL: https://www.postgresql.org/
+pgvector: https://github.com/pgvector/pgvector
+Redis: https://redis.io/
+Neon (PostgreSQL): https://neon.tech/
+Redis Cloud: https://redis.com/
+
+=================================================================

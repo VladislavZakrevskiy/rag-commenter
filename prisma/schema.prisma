@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id                String   @id @default(cuid())
+  telegramMessageId Int
+  channelId         String
+  createdAt         DateTime @default(now())
+  authorUsername    String?
+
+  texts    Text[]
+  images   Image[]
+  comments Comment[]
+
+  @@map("posts")
+}
+
+model Text {
+  id        String                     @id @default(cuid())
+  content   String                     @db.Text
+  embedding Unsupported("vector(256)")?
+  createdAt DateTime                   @default(now())
+
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+
+  @@map("texts")
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  filename  String
+  s3Key     String   @unique
+  s3Url     String
+  altText   String?
+  mimeType  String
+  fileSize  Int
+  createdAt DateTime @default(now())
+
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+
+  @@map("images")
+}
+
+model Comment {
+  id                String       @id @default(cuid())
+  content           String       @db.Text
+  style             CommentStyle
+  telegramMessageId Int
+  createdAt         DateTime     @default(now())
+  relevantPostIds   String[]
+
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+
+  @@map("comments")
+}
+
+enum CommentStyle {
+  FUNNY
+  WHORE
+  TOXIC
+  TRUMP
+  DIMA
+}

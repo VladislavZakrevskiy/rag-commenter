@@ -1,0 +1,147 @@
+БЫСТРЫЙ СТАРТ RAG TELEGRAM BOT
+
+КОМАНДЫ PODMAN ДЛЯ ЗАПУСКА С HOT RELOAD
+
+1. Первый запуск
+
+# Настройка Podman (если не установлен)
+./scripts/setup-podman.sh
+
+# Быстрый старт
+./scripts/quick-start.sh
+
+2. Основные команды
+
+# Показать все доступные команды
+make help
+
+# Запуск в режиме разработки (с hot reload)
+make dev
+
+# Запуск в фоне
+make dev-detached
+
+# Остановить все контейнеры
+make stop
+
+# Перезапустить
+make restart
+
+# Показать логи
+make logs
+
+# Войти в контейнер приложения
+make shell
+
+# Полная очистка
+make clean
+
+3. Прямые команды Podman
+
+# Запуск с hot reload
+podman-compose -f docker-compose.dev.yml up --build
+
+# Запуск в фоне
+podman-compose -f docker-compose.dev.yml up --build -d
+
+# Остановка
+podman-compose -f docker-compose.dev.yml down
+
+# Логи
+podman-compose -f docker-compose.dev.yml logs -f
+
+# Войти в контейнер
+podman-compose -f docker-compose.dev.yml exec app sh
+
+4. Работа с базой данных
+
+# Применить миграции
+make migrate
+
+# Создать новую миграцию
+make migrate-dev
+
+# Открыть Prisma Studio (http://localhost:5555)
+make studio
+
+# Войти в PostgreSQL
+make shell-db
+
+# Сбросить базу данных
+make reset-db
+
+# Создать бэкап
+make backup-db
+
+5. Полезные команды
+
+# Проверить статус сервисов
+make status
+
+# Проверить здоровье сервисов
+make health
+
+# Запустить тесты
+make test
+
+# Проверить код линтером
+make lint
+
+# Форматировать код
+make format
+
+СТРУКТУРА СЕРВИСОВ
+
+- app (порт 3000) - Основное приложение NestJS
+- postgres (порт 5432) - PostgreSQL с pgvector
+- redis (порт 6379) - Redis для очередей
+- prisma-studio (порт 5555) - Prisma Studio для управления БД
+
+ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ
+
+Скопируйте env.example в .env и заполните:
+
+# Telegram
+TELEGRAM_BOT_TOKEN="your_bot_token"
+TELEGRAM_CHANNEL_ID="your_channel_id"
+
+# Yandex Cloud
+YANDEX_CLOUD_API_KEY="your_api_key"
+YANDEX_CLOUD_FOLDER_ID="your_folder_id"
+
+# S3
+YANDEX_S3_ACCESS_KEY_ID="your_access_key"
+YANDEX_S3_SECRET_ACCESS_KEY="your_secret_key"
+YANDEX_S3_BUCKET_NAME="your_bucket_name"
+
+TROUBLESHOOTING
+
+Podman не найден
+
+# macOS
+brew install podman
+
+# Ubuntu/Debian
+sudo apt install podman
+
+# Fedora
+sudo dnf install podman
+
+podman-compose не найден
+
+pip install podman-compose
+
+Порты заняты
+
+# Найти процессы на портах
+lsof -i :3000
+lsof -i :5432
+lsof -i :6379
+
+# Остановить все контейнеры
+make down
+
+Проблемы с правами
+
+# Сделать скрипты исполняемыми
+chmod +x scripts/*.sh
