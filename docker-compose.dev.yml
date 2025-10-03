@@ -39,7 +39,7 @@ services:
 
   # PostgreSQL с pgvector
   postgres:
-    image: pgvector/pgvector:pg15
+    image: docker.io/pgvector/pgvector:pg15
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
@@ -54,7 +54,7 @@ services:
 
   # Redis для очередей
   redis:
-    image: redis:7-alpine
+    image: docker.io/redis:7-alpine
     ports:
       - "6379:6379"
     volumes:
