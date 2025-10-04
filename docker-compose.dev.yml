@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
+    restart: on-failure
     volumes:
       # Монтируем исходный код для hot reload
       - ./src:/app/src:ro
