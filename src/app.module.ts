@@ -8,7 +8,6 @@ import { DatabaseModule } from './modules/database/database.module';
 import { TelegramModule } from './modules/telegram/telegram.module';
 import { ContentModule } from './modules/content/content.module';
 import { PostModule } from './modules/post/post.module';
-import { StorageModule } from './modules/storage/storage.module';
 import { AiModule } from './modules/ai/ai.module';
 
 @Module({
@@ -30,7 +29,6 @@ import { AiModule } from './modules/ai/ai.module';
     TelegramModule,
     ContentModule,
     PostModule,
-    StorageModule,
     AiModule,
   ],
   controllers: [AppController],

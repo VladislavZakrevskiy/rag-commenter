@@ -24,17 +24,9 @@ export class PrismaService
         p."telegramMessageId",
         p."channelId",
         p."authorUsername",
-        (t.embedding <-> ${embedding}::vector) as distance,
-        COALESCE(img.images, '[]'::json) as images
+        (t.embedding <-> ${embedding}::vector) as distance
       FROM texts t
       JOIN posts p ON p.id = t."postId"
-      LEFT JOIN (
-        SELECT 
-          "postId", 
-          json_agg(json_build_object('id', id, 's3Url', "s3Url")) as images
-        FROM images
-        GROUP BY "postId"
-      ) img ON img."postId" = p.id
       WHERE t.embedding IS NOT NULL
       ORDER BY t.embedding <-> ${embedding}::vector
       LIMIT ${limit}

@@ -1,6 +1,14 @@
 # Dockerfile для разработки с hot reload
 FROM node:18-alpine
 
+# Устанавливаем шрифты для skia-canvas
+RUN apk add --no-cache \
+    fontconfig \
+    ttf-dejavu \
+    ttf-droid \
+    ttf-freefont \
+    ttf-liberation
+
 # Устанавливаем рабочую директорию
 WORKDIR /app
 

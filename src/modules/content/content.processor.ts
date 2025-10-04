@@ -43,7 +43,14 @@ export class ContentProcessor {
 
       const selectedImages = this.selectRandomImages(relevantPosts, 1, 3);
 
-      const styles = ['FUNNY', 'WHORE', 'TOXIC', 'TRUMP', 'DIMA'] as const;
+      const styles = [
+        'FUNNY',
+        'WHORE',
+        'TOXIC',
+        'TRUMP',
+        'DIMA',
+        'POZDNYAKOV',
+      ] as const;
       const selectedStyle = styles[Math.floor(Math.random() * styles.length)];
 
       const comment = await this.aiService.generateComment({
@@ -62,13 +69,15 @@ export class ContentProcessor {
       if (selectedImages.length > 0) {
         const message = await this.telegramService.sendMediaGroup(
           post.channelId,
-          selectedImages.map((img) => ({
+          selectedImages.map((img, i) => ({
             type: 'photo',
-            media: img.s3Url,
+            media: img.filename,
+            caption: i === 0 ? comment : undefined,
           })),
           {
-            reply_to_message_id: post.telegramMessageId,
-            caption: comment,
+            reply_parameters: {
+              message_id: post.telegramMessageId,
+            },
           },
         );
         sentMessageId = message[0].message_id;

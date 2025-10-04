@@ -28,11 +28,11 @@ export class TelegramService {
     }
   }
 
-  async sendMediaGroup(
-    chatId: string | number,
-    media: any[],
-    options?: Record<string, unknown>,
-  ) {
+  sendMediaGroup: typeof this.bot.telegram.sendMediaGroup = async (
+    chatId,
+    media,
+    options,
+  ) => {
     try {
       return await this.bot.telegram.sendMediaGroup(chatId, media, options);
     } catch (error) {
@@ -45,7 +45,7 @@ export class TelegramService {
       }
       throw error;
     }
-  }
+  };
 
   async downloadFile(fileId: string): Promise<Buffer> {
     try {

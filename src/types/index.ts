@@ -12,6 +12,7 @@ export interface TelegramMessage {
   };
   text?: string;
   photo?: TelegramPhoto[];
+  caption?: string;
   date: number;
 }
 
@@ -96,7 +97,7 @@ export interface CreateImageData {
 
 export interface CreateCommentData {
   content: string;
-  style: 'FUNNY' | 'WHORE' | 'TOXIC' | 'TRUMP' | 'DIMA';
+  style: 'FUNNY' | 'WHORE' | 'TOXIC' | 'TRUMP' | 'DIMA' | 'POZDNYAKOV';
   telegramMessageId: number;
   postId: string;
   relevantPostIds: string[];
