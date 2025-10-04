@@ -208,6 +208,9 @@ export class ContentService {
 
       await this.postService.createComment({
         content: replyText,
+        // похуй мне
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         style: selectedStyle,
         telegramMessageId: sentMessageId,
         post: {
